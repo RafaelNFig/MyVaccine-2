@@ -11,14 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('vaccination_history', function (Blueprint $table) {
+        Schema::create('vaccination_histories', function (Blueprint $table) {
             $table->id();
-            $table->string('user_cpf', 14);
-            $table->foreign('user_cpf')->references('cpf')->on('users')->onDelete('cascade');
+            $table->string('user_cpf', 11);
             $table->foreignId('vaccine_id')->constrained('vaccines')->onDelete('cascade');
             $table->foreignId('post_id')->constrained('posts')->onDelete('cascade');
             $table->string('batch', 50);
-            $table->timestamp('application_date')->useCurrent();
+            $table->timestamps(); // cria os campos created_at e updated_at
         });
     }
 

@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
@@ -18,7 +19,7 @@ return new class extends Migration
             $table->integer('quantity')->default(0);
             $table->string('batch', 50);
             $table->date('expiration_date');
-            $table->timestamp('last_updated')->useCurrent()->useCurrentOnUpdate();
+            $table->timestamps(); // Adiciona created_at e updated_at
         });
     }
 

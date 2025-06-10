@@ -17,7 +17,7 @@ return new class extends Migration
             $table->integer('min_age');
             $table->integer('max_age')->nullable();
             $table->text('contraindications')->nullable();
-            $table->timestamp('date_up')->useCurrent();
+            $table->timestamps(); // Adiciona created_at e updated_at automaticamente
         });
     }
 
