@@ -13,12 +13,20 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
 {
-    $this->call([
-        UsersSeeder::class,
-        VaccinesSeeder::class,
-        PostsSeeder::class,
-        StocksSeeder::class,
-        VaccinationHistorySeeder::class,
-    ]);
+        // Cria 20 usuários
+        \App\Models\User::factory()->count(20)->create();
+
+        // Cria 10 vacinas
+        \App\Models\Vaccine::factory()->count(10)->create();
+
+        // Cria 10 posts
+        \App\Models\Post::factory()->count(10)->create();
+
+        // Cria 30 stocks
+        \App\Models\Stock::factory()->count(30)->create();
+
+        // Cria 15 registros de vacinação
+        \App\Models\VaccinationHistory::factory()->count(15)->create();
 }
+
 }

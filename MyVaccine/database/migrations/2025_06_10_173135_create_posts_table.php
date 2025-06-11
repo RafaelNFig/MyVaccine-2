@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('address', 100);
             $table->string('city', 50);
             $table->string('state', 2);
-            $table->enum('status', ['ativo', 'inativo'])->default('ativo');
+            $table->string('status');
             $table->timestamps();
         });
     }
