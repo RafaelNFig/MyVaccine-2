@@ -3,10 +3,20 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class VaccinationHistory extends Model
 {
-    protected $fillable = ['user_cpf', 'vaccine_id', 'post_id', 'batch', 'application_date'];
+    use HasFactory;
+
+    protected $fillable = [
+        'user_cpf',
+        'vaccine_id',
+        'post_id',
+        'batch',
+        'application_date',
+    ];
+
 
     public function user()
     {
