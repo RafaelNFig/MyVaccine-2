@@ -3,130 +3,105 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://kit.fontawesome.com/c8e307d42e.js" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="{{ asset('assets/style/style.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
-    <link rel="icon" type="image/x-icon" href="{{ asset('assets/img/icon.png') }}">
+    <link rel="icon" type="image/x-icon" img src="{{ asset('build/assets/img/logo.png') }}" alt="logo">
     <title>My Vaccine</title>
 </head>
-<body>
-
+<body class="overflow-x-hidden text-[#100E3D] font-['Roboto']">
     <header>
-        <nav class="navbar">
-            <a href="{{ route('home') }}"><img src="{{ asset('assets/img/logo.png') }}" alt="logo" class="logo" /></a>
-
-            <ul class="menu">
-                <li><a href="{{ route('home') }}">Home</a></li>
-                <li><a href="{{ route('vaccines.index') }}">Postos de Vacinação</a></li>
-                <li><a href="{{ route('vaccination-history.index') }}">Histórico de Vacinas</a></li>
-            </ul>
-
-            @auth
-                <div class="user-info">
-                    <span>Olá, {{ Auth::user()->name }}</span>
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <button type="submit" class="logout-btn">Sair</button>
-                    </form>
+        <nav class="px-[6%] h-[8vh] flex justify-between items-center shadow-lg text-[#100E3D] relative">
+            <a href="{{ route('home') }}">
+                <img src="{{ asset('build/assets/img/logo.png') }}" alt="logo" class="md:hidden w-[190px]" />
+            </a>
+            <div class="hidden md:block w-full">
+                <div class="flex w-full justify-between items-center">
+                    <a href="{{ route('home') }}">
+                        <img src="{{ asset('build/assets/img/logo.png') }}" alt="logo" class="hidden md:block w-[190px]" />
+                    </a>
+                    <ul class="flex gap-12 uppercase text-[12px]">
+                        <li class="flex flex-col items-center">
+                            <a href="{{ route('home') }}" class="font-semibold">home</a>
+                            <span class="w-2 h-2 bg-blue-500 rounded-full"></span>
+                        </li>
+                        <li><a href="{{ route('vaccines.index') }}" class="hover:font-semibold">postos de vacinação</a></li>
+                        <li><a href="{{ route('vaccination-history.index') }}" class="hover:font-semibold">histórico de vacinas</a></li>
+                    </ul>
+                    <div class="flex items-center gap-4">
+                        @auth
+                            <span class="text-sm font-semibold">Olá, {{ Auth::user()->name }}</span>
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button type="submit" class="bg-red-500 text-white px-4 py-2 text-sm rounded-md hover:bg-red-600">Sair</button>
+                            </form>
+                        @else
+                            <a href="{{ route('login') }}" class="bg-blue-500 text-white px-4 py-2 text-sm rounded-md hover:bg-blue-600">Login</a>
+                            <a href="{{ route('register') }}" class="bg-blue-500 text-white px-4 py-2 text-sm rounded-md hover:bg-blue-600">Cadastro</a>
+                        @endauth
+                    </div>
                 </div>
-            @else
-                <a href="{{ route('login') }}" class="login-btn">Login</a>
-            @endauth
+            </div>
         </nav>
     </header>
 
-    <main class="main-section">
-        <div class="intro">
-            <h1>Encontre <span class="highlight">postos de vacinação</span> próximos a você.</h1>
-            <p>O My Vaccine facilita o acesso à vacinação, permitindo que você encontre postos de saúde, consulte vacinas disponíveis e gerencie seu histórico de imunização de forma prática e segura.</p>
-            <a href="{{ route('vaccines.index') }}" class="cta-button">Encontrar Postos</a>
+    <main class="md:h-[70vh] flex flex-col md:flex-row justify-center px-[6%] gap-[32px] md:gap-[64px] lg:gap-[120px] mt-[4rem]">
+        <div class="flex flex-col justify-center gap-6 max-w-[640px]">
+            <h1 class="font-bold text-[24px] lg:text-[40px]">Encontre <span class="text-blue-400">postos de vacinação</span> próximos a você.</h1>
+            <p class="text-sm text-gray-500">O My Vaccine facilita o acesso à vacinação, permitindo que você encontre postos de saúde, consulte vacinas disponíveis e gerencie seu histórico de imunização de forma prática e segura.</p>
+            <a href="{{ route('vaccines.index') }}" class="bg-blue-500 text-white px-6 py-2 text-sm rounded-md hover:bg-blue-600">Encontrar Postos</a>
         </div>
-
-        <div class="intro-image">
-            <img src="{{ asset('assets/img/vetor-main.jpg') }}" alt="Vacinação">
+        <div class="flex justify-center items-center">
+            <img src="{{ asset('build/assets/img/vetor-main.jpg') }}" alt="Vacinação" class="w-[250px] md:w-[500px]">
         </div>
     </main>
 
-    <section class="features">
-        <ul class="features-list">
-            <li>
-                <img src="{{ asset('assets/img/check-heart-icon.png') }}" alt="">
+    <section class="px-[6%] py-[2rem] border-b border-gray-200">
+        <ul class="flex flex-col md:flex-row justify-evenly gap-6">
+            <li class="flex gap-4 items-center">
+                <img src="{{ asset('build/assets/img/check-heart-icon.png') }}" alt="" class="w-[40px]">
                 <div>
-                    <p class="title">Imunização Segura</p>
-                    <p class="desc">Encontre vacinas recomendadas para você.</p>
+                    <p class="font-semibold text-sm">Imunização Segura</p>
+                    <p class="text-xs text-gray-500">Encontre vacinas recomendadas para você.</p>
                 </div>
             </li>
-            <li>
-                <img src="{{ asset('assets/img/health-check-icon.png') }}" alt="">
+            <li class="flex gap-4 items-center">
+                <img src="{{ asset('build/assets/img/health-check-icon.png') }}" alt="" class="w-[40px]">
                 <div>
-                    <p class="title">Gestão Inteligente</p>
-                    <p class="desc">Postos podem atualizar estoques em tempo real.</p>
+                    <p class="font-semibold text-sm">Gestão Inteligente</p>
+                    <p class="text-xs text-gray-500">Postos podem atualizar estoques em tempo real.</p>
                 </div>
             </li>
-            <li>
-                <img src="{{ asset('assets/img/syringe-vaccine-icon.png') }}" alt="">
+            <li class="flex gap-4 items-center">
+                <img src="{{ asset('build/assets/img/syringe-vaccine-icon.png') }}" alt="" class="w-[40px]">
                 <div>
-                    <p class="title">Histórico de Vacinas</p>
-                    <p class="desc">Acompanhe suas doses e próximas aplicações.</p>
+                    <p class="font-semibold text-sm">Histórico de Vacinas</p>
+                    <p class="text-xs text-gray-500">Acompanhe suas doses e próximas aplicações.</p>
                 </div>
             </li>
         </ul>
     </section>
 
-    <section class="info-section">
-        <div class="info-text">
-            <h2>Dados seguros e sempre <span class="highlight">disponíveis.</span></h2>
-            <p>O My Vaccine protege suas informações com segurança e confiabilidade. Todos os dados são armazenados de forma segura, garantindo que você tenha acesso rápido e confiável sempre que precisar.</p>
-        </div>
-        <div class="info-image">
-            <img src="{{ asset('assets/img/vetor-section-1.jpg') }}" alt="">
-        </div>
-    </section>
-
-    <section class="info-section reverse">
-        <div class="info-image">
-            <img src="{{ asset('assets/img/vetor-section-2.png') }}" alt="">
-        </div>
-        <div class="info-text">
-            <h2>Acompanhe a disponibilidade de vacinas em <span class="highlight">tempo real.</span></h2>
-            <p>Com o My Vaccine, você pode consultar rapidamente a disponibilidade de vacinas em diferentes postos de saúde. Acesse informações atualizadas sobre estoques e planeje sua vacinação de forma prática e sem complicações.</p>
-        </div>
-    </section>
-
-    <section class="info-section">
-        <div class="info-text">
-            <h2>Localize postos de saúde com <span class="highlight">facilidade.</span></h2>
-            <p>Com nossa ferramenta de busca, você encontra rapidamente os postos de vacinação mais próximos da sua localização. Visualize endereços, horários de funcionamento e vacinas disponíveis de forma simples e acessível.</p>
-        </div>
-        <div class="info-image">
-            <img src="{{ asset('assets/img/vetor-section-3.png') }}" alt="">
-        </div>
-    </section>
-
-    <footer class="footer">
-        <div class="footer-content">
-            <div class="footer-brand">
-                <img src="{{ asset('assets/img/logo-white.png') }}" alt="Logo My Vaccine">
-                <p>Facilitando o acesso à vacinação.</p>
+    <footer class="bg-[#100E3D] text-white py-8 px-[6%] mt-12">
+        <div class="container mx-auto flex flex-col md:flex-row justify-between items-center">
+            <div class="flex flex-col items-center md:items-start">
+                <img src="{{ asset('build/assets/img/logo-white.png') }}" alt="Logo My Vaccine" class="w-40 mb-2">
+                <p class="text-sm text-gray-400">Facilitando o acesso à vacinação.</p>
             </div>
-
-            <div class="footer-links">
-                <a href="{{ route('home') }}">Home</a>
-                <a href="{{ route('vaccines.index') }}">Postos de Vacinação</a>
-                <a href="{{ route('vaccination-history.index') }}">Histórico de Vacinas</a>
+            <div class="flex flex-wrap justify-center gap-6 mt-6 md:mt-0">
+                <a href="{{ route('home') }}" class="text-sm hover:underline">Home</a>
+                <a href="{{ route('vaccines.index') }}" class="text-sm hover:underline">Postos de Vacinação</a>
+                <a href="{{ route('vaccination-history.index') }}" class="text-sm hover:underline">Histórico de Vacinas</a>
             </div>
-
-            <div class="footer-socials">
-                <a href="#"><i class="fab fa-facebook"></i></a>
-                <a href="#"><i class="fab fa-instagram"></i></a>
-                <a href="#"><i class="fab fa-twitter"></i></a>
+            <div class="flex gap-4 mt-6 md:mt-0">
+                <a href="#" class="text-gray-400 hover:text-white text-xl"><i class="fab fa-facebook"></i></a>
+                <a href="#" class="text-gray-400 hover:text-white text-xl"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="text-gray-400 hover:text-white text-xl"><i class="fab fa-twitter"></i></a>
             </div>
         </div>
-
-        <div class="footer-bottom">
+        <div class="text-center text-gray-400 text-xs mt-6 border-t border-gray-600 pt-4">
             &copy; 2025 My Vaccine. Todos os direitos reservados.
         </div>
     </footer>
-
 </body>
 </html>
