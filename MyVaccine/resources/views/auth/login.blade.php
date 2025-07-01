@@ -1,75 +1,77 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://kit.fontawesome.com/c8e307d42e.js" crossorigin="anonymous"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
     <title>Login - My Vaccine</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body>
+<body class="bg-gray-50 min-h-screen flex flex-col">
 
-    <header>
-        <nav>
-            <div>
-                <a href="{{ route('home') }}">
-                    <img src="{{ asset('assets/img/logo.png') }}" alt="Logo" style="height: 60px;">
-                </a>
-            </div>
-
-            <ul>
-                <li><a href="{{ route('home') }}">Home</a></li>
-                <li><a href="#">Postos de Vacinação</a></li>
-                <li><a href="#">Histórico de Vacinas</a></li>
-            </ul>
-
-            @auth
-                <div>
-                    <span>Olá, {{ Auth::user()->name }}!</span>
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <button type="submit">Sair</button>
-                    </form>
-                </div>
-            @endauth
-
-            @guest
-                <a href="{{ route('login') }}">Login</a>
-            @endguest
+    <header class="bg-white shadow-md">
+        <nav class="container mx-auto flex items-center justify-between p-4">
+            <a href="{{ route('home') }}">
+                <img src="{{ asset('build/assets/img/logo.png') }}" alt="Logo" class="h-14" />
+            </a>
         </nav>
     </header>
 
-    <main>
-        <div>
-            <h1>Login</h1>
+    <main class="flex-grow flex items-center justify-center p-6">
+        <div class="bg-white rounded-lg shadow-lg p-8 max-w-md w-full">
+            <h1 class="text-3xl font-bold mb-6 text-center text-blue-700">Login</h1>
 
             @if (session('status'))
-                <div>{{ session('status') }}</div>
+                <div class="mb-4 p-3 bg-green-100 text-green-700 rounded">
+                    {{ session('status') }}
+                </div>
             @endif
 
-            <form method="POST" action="{{ route('login') }}">
+            <form method="POST" action="{{ route('login') }}" class="space-y-6">
                 @csrf
 
-                <!-- CPF -->
                 <div>
-                    <label for="cpf">CPF:</label>
-                    <input type="text" name="cpf" id="cpf" value="{{ old('cpf') }}" required autofocus>
+                    <label for="cpf" class="block mb-1 font-semibold text-gray-700">CPF:</label>
+                    <input
+                        type="text"
+                        name="cpf"
+                        id="cpf"
+                        value="{{ old('cpf') }}"
+                        required
+                        autofocus
+                        class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
                     @error('cpf')
-                        <div>{{ $message }}</div>
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
 
-                <!-- Senha -->
                 <div>
-                    <label for="password">Senha:</label>
-                    <input type="password" name="password" id="password" required>
+                    <label for="password" class="block mb-1 font-semibold text-gray-700">Senha:</label>
+                    <input
+                        type="password"
+                        name="password"
+                        id="password"
+                        required
+                        class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
                     @error('password')
-                        <div>{{ $message }}</div>
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
 
-                <!-- Botões -->
-                <div>
-                    <button type="submit">Entrar</button>
-                    <a href="{{ route('register') }}">Criar conta</a>
+                <div class="flex items-center justify-between">
+                    <button
+                        type="submit"
+                        class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition"
+                    >
+                        Entrar
+                    </button>
+                    <a href="{{ route('register') }}" class="text-blue-600 hover:underline text-sm">
+                        Criar conta
+                    </a>
                 </div>
             </form>
         </div>
