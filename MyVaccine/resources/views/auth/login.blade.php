@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://kit.fontawesome.com/c8e307d42e.js" crossorigin="anonymous"></script>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
     <title>Login - My Vaccine</title>
@@ -33,17 +33,17 @@
                 @csrf
 
                 <div>
-                    <label for="cpf" class="block mb-1 font-semibold text-gray-700">CPF:</label>
+                    <label for="email" class="block mb-1 font-semibold text-gray-700">Email:</label>
                     <input
-                        type="text"
-                        name="cpf"
-                        id="cpf"
-                        value="{{ old('cpf') }}"
+                        type="email"
+                        name="email"
+                        id="email"
+                        value="{{ old('email') }}"
                         required
                         autofocus
                         class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
-                    @error('cpf')
+                    @error('email')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
