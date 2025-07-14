@@ -1,10 +1,12 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+
+// Controladores organizados por pastas
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\VaccineController;
-use App\Http\Controllers\StockController;
-use App\Http\Controllers\VaccinationHistoryController;
+use App\Http\Controllers\Vaccines\VaccineController;
+use App\Http\Controllers\Vaccines\StockController;
+use App\Http\Controllers\Vaccines\VaccinationHistoryController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 
