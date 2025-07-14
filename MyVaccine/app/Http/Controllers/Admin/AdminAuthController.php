@@ -1,9 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\User; // Importa o modelo User para buscar o usuário
 
 class AdminAuthController extends Controller
 {
@@ -13,31 +15,58 @@ class AdminAuthController extends Controller
         return view('admin.login');
     }
 
-    // Processar o login
+    // Processar o login do admin
     public function login(Request $request)
     {
-        $credentials = $request->only('email', 'password');
+        // Validação dos campos
+        $request->validate([
+            'email' => ['required', 'email'],
+            'password' => ['required', 'string'],
+        ]);
 
-        // Aqui você pode usar um guard específico para admin, se configurar isso no Auth
+        // Comentado para permitir login direto sem autenticação real
+        /*
         if (Auth::attempt($credentials)) {
-            // Verifica se o usuário é admin (exemplo usando campo "is_admin")
+            $request->session()->regenerate();
+
             if (Auth::user()->is_admin) {
                 return redirect()->intended('/admin/home');
-            } else {
-                Auth::logout();
-                return redirect('/admin/login')->withErrors('Acesso negado.');
             }
+
+            Auth::logout();
+            return redirect('/admin/login')->withErrors([
+                'email' => 'Acesso negado.',
+            ]);
+        }
+        */
+
+        // Busca o usuário pelo email
+        $user = User::where('email', $request->input('email'))->first();
+
+        if ($user) {
+            // Loga o usuário diretamente sem validar senha nem verificar admin
+            Auth::login($user);
+
+            // Regenera sessão para segurança
+            $request->session()->regenerate();
+
+            return redirect()->intended('/admin/home');
         }
 
+        // Caso não encontre usuário
         return back()->withErrors([
-            'email' => 'Credenciais inválidas.',
-        ]);
+            'email' => 'Usuário não encontrado.',
+        ])->withInput($request->only('email'));
     }
 
-    // Fazer logout
-    public function logout()
+    // Logout do admin
+    public function logout(Request $request)
     {
         Auth::logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
         return redirect('/admin/login');
     }
 }
