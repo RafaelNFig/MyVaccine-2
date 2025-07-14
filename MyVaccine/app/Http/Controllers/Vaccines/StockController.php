@@ -1,7 +1,8 @@
 <?php
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Vaccines;
 
 use App\Models\Stock;
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 class StockController extends Controller

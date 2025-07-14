@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Vaccines;
 
+use App\Http\Controllers\Controller;
 use App\Models\Vaccine;
 use Illuminate\Http\Request;
 

@@ -37,12 +37,11 @@ class RegisterController extends Controller
             'dob' => $validated['dob'],
             'address' => $validated['address'],
             'password' => Hash::make($validated['password']),
+            
         ]);
 
-        // Opcional: logar o usuário automaticamente após o cadastro
-        Auth::login($user);
 
         // Redireciona para a home do usuário com mensagem
-        return redirect()->route('user.home')->with('success', 'Cadastro realizado com sucesso!');
+        return redirect()->route('login')->with('success', 'Cadastro realizado com sucesso!');
     }
 }

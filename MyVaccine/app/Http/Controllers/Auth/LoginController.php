@@ -6,44 +6,46 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
+use App\Models\User; // lembre-se de importar o modelo User
 
 class LoginController extends Controller
 {
-    // Exibe o formulário de login
     public function showLoginForm()
     {
         return view('auth.login');
     }
 
-    // Realiza o login do usuário
     public function login(Request $request)
     {
-        // Validação dos dados recebidos
-        $credentials = $request->validate([
-            'cpf' => ['required', 'string'],
-            'password' => ['required', 'string'],
+        // Valida somente o email (sem senha)
+        $request->validate([
+            'email' => ['required', 'email'],
+            //'password' => ['required', 'string'], // comentado
         ]);
 
-        // Tenta autenticar com cpf e senha
-        if (Auth::attempt(['cpf' => $credentials['cpf'], 'password' => $credentials['password']])) {
-            // Regenera a sessão para evitar fixação
+        // Busca usuário pelo email
+        $user = User::where('email', $request->input('email'))->first();
+
+        if ($user) {
+            // Loga o usuário diretamente, sem validar senha
+            Auth::login($user);
+
+            // Regenera sessão para segurança
             $request->session()->regenerate();
 
-            // Guarda dados adicionais na sessão (opcional)
-            Session::put('cpf', Auth::user()->cpf);
-            Session::put('name', Auth::user()->name);
+            // Armazena dados na sessão (opcional)
+            Session::put('email', $user->email);
+            Session::put('name', $user->name);
 
-            // Redireciona para a página anterior ou home
             return redirect()->intended('/');
         }
 
-        // Caso falhe, volta com erro específico
+        // Se não achar usuário, retorna erro
         return back()->withErrors([
-            'cpf' => 'CPF ou senha inválidos.',
-        ])->withInput($request->only('cpf'));
+            'email' => 'Usuário não encontrado.',
+        ])->withInput($request->only('email'));
     }
 
-    // Realiza logout do usuário
     public function logout(Request $request)
     {
         Auth::logout();
@@ -52,5 +54,10 @@ class LoginController extends Controller
         $request->session()->regenerateToken();
 
         return redirect('/login');
+    }
+
+    public function username()
+    {
+        return 'email';
     }
 }
