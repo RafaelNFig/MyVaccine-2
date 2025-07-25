@@ -1,20 +1,21 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<script src="../assets/js/password.js"></script>
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://kit.fontawesome.com/c8e307d42e.js" crossorigin="anonymous"></script>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
-    <link rel="icon" type="image/x-icon" href="./assets/img/icon.png">
+    <link rel="icon" type="image/x-icon" href="{{ asset('build/assets/img/icon.png') }}">
     <title>Login Admin - My Vaccine</title>
 </head>
 
 <body class="overflow-x-hidden h-screen">
 
     <nav class="px-[6%] h-[8%] flex justify-between items-center navbar text-[#100E3D] bg-white shadow-md">
-        <a href="../index.php"><img src="../assets/img/logo.png" alt="logo" class="w-[140px] 2xl:w-[190px]" /></a>
+        <a href="{{ route('home') }}">
+            <img src="{{ asset('build/assets/img/logo.png') }}" alt="logo" class="w-[140px] 2xl:w-[190px]" />
+        </a>
     </nav>
 
     <div class="w-full flex">
@@ -25,33 +26,62 @@
 
         <!-- Right login form -->
         <section class="flex justify-center items-center w-full lg:w-1/2 h-[92vh]">
-            <form action="index.php" method="POST"
+            <form method="POST" action="{{ route('admin.login.post') }}"
                 class="text-[12px] 2xl:text-base flex flex-col gap-2 2xl:gap-3 px-6 lg:px-[32px] w-full lg:w-4/6 justify-center">
-                <h1 class="text-xl 2xl:text-2xl font-semibold">Login Admin</h1>
+                @csrf
 
-                <!-- Campo Login (CPF ou Email) -->
+                <h1 class="text-xl 2xl:text-2xl font-semibold mb-4">Login Admin</h1>
+
                 <div class="flex flex-col gap-2">
-                    <label for="login">Email:</label>
-                    <input type="text" name="login" id="login" class="border-2 p-2 2xl:p-3 rounded-lg"
-                        placeholder="Digite seu Email" required />
+                    <label for="email">Email:</label>
+                    <input
+                        type="email"
+                        name="email"
+                        id="email"
+                        placeholder="Digite seu Email"
+                        value="{{ old('email') }}"
+                        required
+                        autofocus
+                        class="border-2 p-2 2xl:p-3 rounded-lg"
+                    />
+                    @error('email')
+                        <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                    @enderror
                 </div>
 
-                <!--Senha -->
                 <div class="flex flex-col gap-2 relative">
-                     <label for="password">Senha:</label>
-                     <input type="password" name="password" id="password" class="border-2 p-2 pr-10 2xl:p-3 rounded-lg" 
-                     placeholder="Digite sua senha" required />
-                     <button type="button" onclick="togglePassword('password', 'eyeIcon1')" class="absolute right-3 top-12 text-gray-600">
-                     <i id="eyeIcon1" class="fa-solid fa-eye-slash"></i>
-                     </button>
+                    <label for="password">Senha:</label>
+                    <input
+                        type="password"
+                        name="password"
+                        id="password"
+                        placeholder="Digite sua senha"
+                        required
+                        class="border-2 p-2 pr-10 2xl:p-3 rounded-lg"
+                    />
+                    <button
+                        type="button"
+                        onclick="togglePassword('password', 'eyeIcon1')"
+                        class="absolute right-3 top-12 text-gray-600"
+                        tabindex="-1"
+                    >
+                        <i id="eyeIcon1" class="fa-solid fa-eye-slash"></i>
+                    </button>
+                    @error('password')
+                        <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                    @enderror
                 </div>
-                <!-- Link para recuperar senha -->
-                <!-- <a href="./forgot-password.php" class="text-end text-cyan-500 hover:underline">Esqueceu a senha?</a> -->
 
-                <!-- Botões -->
+                {{-- Aqui pode adicionar mensagem de status --}}
+                @if(session('status'))
+                    <p class="text-green-600 text-center mt-2">{{ session('status') }}</p>
+                @endif
+
                 <div class="flex flex-col sm:flex-row gap-3 w-full text-xs md:text-base text-center sm:text-start mt-5">
-                    <button type="submit"
-                        class="bg-[#0B5FFF] text-[12px] 2xl:text-base text-white font-semibold py-2 px-8 2xl:py-4 2xl:px-10 rounded-lg hover:bg-[#074DD2] cursor-pointer">
+                    <button
+                        type="submit"
+                        class="bg-[#0B5FFF] text-white font-semibold py-2 px-8 2xl:py-4 2xl:px-10 rounded-lg hover:bg-[#074DD2] cursor-pointer"
+                    >
                         Login
                     </button>
                 </div>
@@ -60,7 +90,21 @@
 
     </div>
 
-    <script src="../assets/script/script.js"></script>
+    <script>
+        // Função para mostrar/esconder senha (toggle)
+        function togglePassword(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+            if (input.type === "password") {
+                input.type = "text";
+                icon.classList.remove("fa-eye-slash");
+                icon.classList.add("fa-eye");
+            } else {
+                input.type = "password";
+                icon.classList.remove("fa-eye");
+                icon.classList.add("fa-eye-slash");
+            }
+        }
+    </script>
 </body>
-
 </html>
