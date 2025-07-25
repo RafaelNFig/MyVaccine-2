@@ -22,9 +22,6 @@ Route::prefix('admin')->group(function () {
     Route::get('home', [AdminAuthController::class, 'showLoginForm'])->name('admin.home');
 });
 
-
-
-
 // Página inicial pública
 Route::get('/', function () {
     return view('home');
