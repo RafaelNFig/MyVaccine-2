@@ -6,7 +6,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://kit.fontawesome.com/c8e307d42e.js" crossorigin="anonymous"></script>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
-    <link rel="icon" type="image/x-icon" href="{{ asset('build/assets/img/icon.png') }}">
+    <link rel="icon" type="image/x-icon" href="{{ asset('img/icon.png') }}">
     <title>Login Admin - My Vaccine</title>
 </head>
 
@@ -14,7 +14,7 @@
 
     <nav class="px-[6%] h-[8%] flex justify-between items-center navbar text-[#100E3D] bg-white shadow-md">
         <a href="{{ route('home') }}">
-            <img src="{{ asset('build/assets/img/logo.png') }}" alt="logo" class="w-[140px] 2xl:w-[190px]" />
+            <img src="{{ asset('img/logo.png') }}" alt="logo" class="w-[140px] 2xl:w-[190px]" />
         </a>
     </nav>
 

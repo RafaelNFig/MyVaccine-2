@@ -14,7 +14,7 @@
     <header class="bg-white shadow-md">
         <nav class="container mx-auto flex items-center justify-between p-4">
             <a href="{{ route('home') }}">
-                <img src="{{ asset('build/assets/img/logo.png') }}" alt="Logo" class="h-14" />
+                <img src="{{ asset('img/logo.png') }}" alt="Logo" class="h-14" />
             </a>
         </nav>
     </header>
