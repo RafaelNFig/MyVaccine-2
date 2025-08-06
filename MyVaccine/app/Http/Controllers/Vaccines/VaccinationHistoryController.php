@@ -11,12 +11,12 @@ class VaccinationHistoryController extends Controller
     public function index()
     {
         $histories = VaccinationHistory::with('user', 'vaccine')->get();
-        return view('vaccination_history.index', compact('histories'));
+        return view('users.vaccination-history', compact('histories'));
     }
 
     public function show($id)
     {
         $history = VaccinationHistory::with('user', 'vaccine')->findOrFail($id);
-        return view('vaccination_history.show', compact('history'));
+        return view('users.vaccination-history', compact('history'));
     }
 }
