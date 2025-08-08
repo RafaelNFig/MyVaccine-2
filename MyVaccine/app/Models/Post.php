@@ -11,6 +11,11 @@ class Post extends Model
 
     protected $fillable = ['name', 'address', 'city', 'state', 'status'];
 
+    // Define valores padrão para atributos do model
+    protected $attributes = [
+        'status' => 'ativo',
+    ];
+
     public function stocks()
     {
         return $this->hasMany(Stock::class);

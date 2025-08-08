@@ -11,59 +11,83 @@ class PostoController extends Controller
     public function index()
     {
         $postos = Post::all();
-        return view('postos.index', compact('postos'));
-    }
-
-    public function create()
-    {
-        return view('postos.create');
+        return view('home', compact('postos'));
     }
 
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'name' => 'required|max:100',
             'address' => 'required|max:100',
             'city' => 'required|max:50',
             'state' => 'required|size:2',
-            'status' => 'required|in:ativo,inativo',
+            'status' => 'sometimes|in:ativo,inativo',
         ]);
 
-        Post::create($request->all());
-        return redirect()->route('postos.index')->with('success', 'Posto criado com sucesso.');
-    }
+        // Se status não enviado, seta 'ativo'
+        if (!isset($validated['status'])) {
+            $validated['status'] = 'ativo';
+        }
 
-    public function show($id)
-    {
-        $posto = Post::findOrFail($id);
-        return view('postos.show', compact('posto'));
+        $posto = Post::create($validated);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Posto criado com sucesso.',
+            'post' => $posto,
+        ]);
     }
 
     public function edit($id)
     {
         $posto = Post::findOrFail($id);
-        return view('postos.edit', compact('posto'));
+
+        return response()->json([
+            'success' => true,
+            'post' => $posto,
+        ]);
     }
 
     public function update(Request $request, $id)
     {
-        $request->validate([
+        // Permite PUT ou PATCH
+        if (!$request->isMethod('put') && !$request->isMethod('patch')) {
+            return response()->json(['success' => false, 'message' => 'Método HTTP inválido.'], 405);
+        }
+
+        $validated = $request->validate([
             'name' => 'required|max:100',
             'address' => 'required|max:100',
             'city' => 'required|max:50',
             'state' => 'required|size:2',
-            'status' => 'required|in:ativo,inativo',
+            'status' => 'sometimes|in:ativo,inativo',
         ]);
 
         $posto = Post::findOrFail($id);
-        $posto->update($request->all());
+        $posto->update($validated);
 
-        return redirect()->route('postos.index')->with('success', 'Posto atualizado com sucesso.');
+        return response()->json([
+            'success' => true,
+            'message' => 'Posto atualizado com sucesso.',
+            'post' => $posto,
+        ]);
     }
 
     public function destroy($id)
     {
-        Post::destroy($id);
-        return redirect()->route('postos.index')->with('success', 'Posto removido.');
+        $deleted = Post::destroy($id);
+
+        if ($deleted) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Posto removido com sucesso.',
+                'post_id' => $id,
+            ]);
+        }
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Erro ao remover posto.',
+        ], 500);
     }
 }
