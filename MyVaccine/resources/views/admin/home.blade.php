@@ -32,7 +32,7 @@
                     <i class="fa-solid fa-bed text-[20px] text-gray-400 hover:text-black transition all"></i>
                 </a>
                 <!-- Vacinas -->
-                <a href="{{ route('vaccines.index') }}">
+                <a href="{{ route('admin.vaccines.home') }}">
                     <i class="fa-solid fa-syringe text-[20px] text-gray-400 hover:text-black transition all"></i>
                 </a>
             </div>
@@ -67,6 +67,10 @@
                         <option value="{{ $uf }}">{{ $uf }}</option>
                     @endforeach
                 </select>
+                
+                <!-- Campo status hidden para enviar padrão 'ativo' -->
+                <input type="hidden" name="status" value="ativo" />
+
                 <div class="flex justify-end gap-2">
                     <button type="button" id="closeModalPost" class="bg-gray-400 px-3 py-1 rounded">Cancelar</button>
                     <button type="submit" class="bg-blue-500 text-white px-3 py-1 rounded">Salvar</button>
@@ -120,7 +124,7 @@
                         <th class="font-light p-2 border-b w-1/4">Cidade</th>
                         <th class="font-light p-2">Estado</th>
                         <th class="font-light p-2">Ações</th>
-                        <th class="font-light p-2">Status</th> <!-- A célula de Status deve ficar no final da linha -->
+                        <th class="font-light p-2">Status</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -131,7 +135,7 @@
                     @endif
 
                     @foreach ($posts as $post)
-                    <tr class="hover:bg-gray-50">
+                    <tr class="hover:bg-gray-50" data-id="{{ $post->id }}">
                         <td class="px-6 py-3 border-b text-xs md:text-sm text-gray-800">{{ $post->name }}</td>
                         <td class="px-2 py-3 border-b text-xs md:text-sm text-gray-800">{{ $post->address }}</td>
                         <td class="px-2 py-3 border-b text-xs md:text-sm text-gray-800">{{ $post->city }}</td>
@@ -141,9 +145,12 @@
                                 class="border-green-500 border-2 text-green-500 px-3 py-1 md:text-sm rounded-md transition all hover:bg-green-500 hover:text-white flex gap-2 items-center">
                                 Gerenciar estoque <i class="fa-solid fa-suitcase-medical"></i></a>
 
-                            <a href="{{ route('postos.edit', $post->id) }}"
-                                class="h-full border-blue-500 border-2 text-blue-500 px-3 py-1 md:text-sm rounded-md transition all hover:bg-blue-500 hover:text-white flex gap-2 items-center">
-                                Editar <i class="fa-solid fa-pencil"></i></a>
+                            <button
+                                onclick="openEditModal({{ $post->id }})"
+                                class="h-full border-blue-500 border-2 text-blue-500 px-3 py-1 md:text-sm rounded-md transition all hover:bg-blue-500 hover:text-white flex gap-2 items-center"
+                            >
+                                Editar <i class="fa-solid fa-pencil"></i>
+                            </button>
 
                             @if ($post->status === 'ativo')
                             <form action="{{ route('postos.disable', $post->id) }}" method="POST" onsubmit="return confirm('Tem certeza que deseja desativar este posto?');" class="inline">
@@ -171,7 +178,6 @@
                         <td class="p-2 py-3 border-b text-xs md:text-xs text-center uppercase">
                             {{ $post->status }}
                         </td>
-
                     </tr>
                     @endforeach
                 </tbody>
@@ -179,47 +185,21 @@
         </div>
     </section>
 
-    <script src="{{ asset('assets/js/index.js') }}"></script>
+    <!-- Script externo -->
+    <script src="{{ asset('assets/js/posts/createPost.js') }}"></script>
+    <script src="{{ asset('assets/js/posts/editPost.js') }}"></script>
     <script>
-        let icon = document.getElementById('icon-arrow');
-        let btn = document.getElementById('btn');
-
-        function toggleMenu() {
-            const menu = document.getElementById('mobileMenu');
-            menu.classList.toggle('hidden');
-
-            if (icon.classList.contains("fa-xmark")) {
-                icon.classList.remove("fa-xmark");
-                icon.classList.add("fa-bars");
-                btn.classList.add("left-[20px]");
-            } else {
-                icon.classList.remove("fa-bars");
-                icon.classList.add("fa-xmark");
-                btn.classList.remove("left-[20px]");
-            }
+      // Inicializa os scripts após o carregamento do DOM
+      document.addEventListener('DOMContentLoaded', () => {
+        if(typeof initCreatePost === 'function') {
+          initCreatePost();
         }
+        if(typeof initEditPost === 'function') {
+          initEditPost();
+        }
+      });
     </script>
 
-<script>
-    const openModalBtn = document.getElementById('openModalPost');
-    const closeModalBtn = document.getElementById('closeModalPost');
-    const modal = document.getElementById('modal');
-
-    openModalBtn?.addEventListener('click', () => {
-        modal.classList.remove('hidden');
-    });
-
-    closeModalBtn?.addEventListener('click', () => {
-        modal.classList.add('hidden');
-    });
-
-    // Fecha a modal ao clicar fora do conteúdo
-    modal?.addEventListener('click', (e) => {
-        if (e.target === modal) {
-            modal.classList.add('hidden');
-        }
-    });
-</script>
 </body>
 
 </html>
