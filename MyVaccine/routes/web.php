@@ -110,6 +110,7 @@ Route::middleware('auth')->group(function () {
     Route::patch('/postos/{id}/activate', [PostoController::class, 'activate'])->name('postos.activate');
     Route::get('/postos/{id}/edit', [PostoController::class, 'edit'])->name('postos.edit');
     Route::put('/postos/{id}', [PostoController::class, 'update'])->name('postos.update');
+    Route::patch('/postos/{posto}/toggle-status', [PostoController::class, 'toggleStatus'])->name('postos.toggleStatus');
 
     /*
     |--------------------------------------------------------------------------
