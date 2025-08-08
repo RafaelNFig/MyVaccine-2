@@ -90,4 +90,50 @@ class PostoController extends Controller
             'message' => 'Erro ao remover posto.',
         ], 500);
     }
+
+    
+    public function disable($id)
+    {
+        $posto = Post::findOrFail($id);
+        $posto->status = 'inativo';
+        $posto->save();
+    
+        return response()->json([
+            'success' => true,
+            'message' => 'Posto desativado com sucesso.',
+            'post' => $posto,
+        ]);
+    }
+    
+    public function activate($id)
+    {
+        $posto = Post::findOrFail($id);
+        $posto->status = 'ativo';
+        $posto->save();
+    
+        return response()->json([
+            'success' => true,
+            'message' => 'Posto ativado com sucesso.',
+            'post' => $posto,
+        ]);
+    }
+
+    public function toggleStatus($id)
+{
+    $posto = Post::find($id);
+
+    if (!$posto) {
+        return response()->json(['success' => false, 'message' => 'Posto não encontrado'], 404);
+    }
+
+    $posto->status = ($posto->status === 'ativo') ? 'inativo' : 'ativo';
+    $posto->save();
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Status do posto alterado com sucesso.',
+        'post' => $posto
+    ]);
+}
+
 }
