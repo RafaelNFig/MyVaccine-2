@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="csrf-token" content="{{ csrf_token() }}" />
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="{{ asset('assets/style/style.css') }}" />
     <script src="https://kit.fontawesome.com/c8e307d42e.js" crossorigin="anonymous"></script>
@@ -16,22 +17,20 @@
 
     <nav id="mobileMenu" class="flex flex-col justify-between transition-all relative p-5 items-center border-r-2">
         <div class="flex flex-col items-center gap-4">
-            <a href="{{ route('postos.index') }}"><img src="{{ asset('img/logo-mobile.png') }}" class="w-[36px]" alt="logo my-vaccine"></a>
+            <a href="{{ route('postos.index') }}">
+                <img src="{{ asset('img/logo-mobile.png') }}" class="w-[36px]" alt="logo my-vaccine">
+            </a>
 
-            <!-- barrinha -->
             <span class="h-[1px] w-full bg-gray-300 rounded-full"></span>
 
             <div class="grid grid-cols-1 gap-[32px] justify-items-center">
                 <span class="uppercase text-xs text-gray-300 font-semibold">main</span>
-                <!-- Postos de saude -->
                 <a href="{{ route('postos.index') }}">
                     <i class="fa-solid fa-house-medical text-[20px] text-black"></i>
                 </a>
-                <!-- Pacientes -->
                 <a href="{{ route('vaccination-history.index') }}">
                     <i class="fa-solid fa-bed text-[20px] text-gray-400 hover:text-black transition all"></i>
                 </a>
-                <!-- Vacinas -->
                 <a href="{{ route('admin.vaccines.home') }}">
                     <i class="fa-solid fa-syringe text-[20px] text-gray-400 hover:text-black transition all"></i>
                 </a>
@@ -67,8 +66,6 @@
                         <option value="{{ $uf }}">{{ $uf }}</option>
                     @endforeach
                 </select>
-                
-                <!-- Campo status hidden para enviar padrão 'ativo' -->
                 <input type="hidden" name="status" value="ativo" />
 
                 <div class="flex justify-end gap-2">
@@ -153,25 +150,19 @@
                             </button>
 
                             @if ($post->status === 'ativo')
-                            <form action="{{ route('postos.disable', $post->id) }}" method="POST" onsubmit="return confirm('Tem certeza que deseja desativar este posto?');" class="inline">
-                                @csrf
-                                @method('PATCH')
-                                <button
-                                    class="h-full border-red-500 border-2 text-red-500 px-3 py-1 md:text-sm rounded-md transition all hover:bg-red-500 hover:text-white flex gap-2 items-center"
-                                    type="submit">
-                                    Desativar posto <i class="fa-solid fa-power-off"></i>
-                                </button>
-                            </form>
+                            <button
+                                onclick="confirmToggleStatus({{ $post->id }}, this)"
+                                class="h-full border-red-500 border-2 text-red-500 px-3 py-1 md:text-sm rounded-md transition all hover:bg-red-500 hover:text-white flex gap-2 items-center"
+                            >
+                                Desativar posto <i class="fa-solid fa-power-off"></i>
+                            </button>
                             @elseif ($post->status === 'inativo')
-                            <form action="{{ route('postos.activate', $post->id) }}" method="POST" onsubmit="return confirm('Tem certeza que deseja ativar este posto?');" class="inline">
-                                @csrf
-                                @method('PATCH')
-                                <button
-                                    class="h-full border-green-500 border-2 text-green-500 px-3 py-1 md:text-sm rounded-md transition all hover:bg-green-500 hover:text-white flex gap-2 items-center"
-                                    type="submit">
-                                    Ativar posto <i class="fa-solid fa-power-off"></i>
-                                </button>
-                            </form>
+                            <button
+                                onclick="confirmToggleStatus({{ $post->id }}, this)"
+                                class="h-full border-green-500 border-2 text-green-500 px-3 py-1 md:text-sm rounded-md transition all hover:bg-green-500 hover:text-white flex gap-2 items-center"
+                            >
+                                Ativar posto <i class="fa-solid fa-power-off"></i>
+                            </button>
                             @endif
                         </td>
 
@@ -185,18 +176,30 @@
         </div>
     </section>
 
-    <!-- Script externo -->
+    <!-- Modal de Confirmação -->
+<div id="confirmModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+    <div class="bg-white rounded-lg p-6 w-80 max-w-full text-center shadow-lg">
+      <p class="text-lg font-medium mb-6">Deseja continuar com a ação?</p>
+      <div class="flex justify-center gap-4">
+        <button id="confirmNoBtn" class="h-full border-red-500 border-2 text-red-500 px-3 py-1 md:text-sm rounded-md transition all hover:bg-red-500 hover:text-white flex gap-2 items-center">Não</button>
+        <button id="confirmYesBtn" class="h-full border-green-500 border-2 text-green-500 px-3 py-1 md:text-sm rounded-md transition all hover:bg-green-500 hover:text-white flex gap-2 items-center">Sim</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="notification" 
+  class="fixed top-5 right-5 text-white px-4 py-2 rounded shadow-lg opacity-0 pointer-events-none transition-opacity duration-300 z-50">
+</div>
+
+    <!-- Scripts externos -->
     <script src="{{ asset('assets/js/posts/createPost.js') }}"></script>
     <script src="{{ asset('assets/js/posts/editPost.js') }}"></script>
+    <script src="{{ asset('assets/js/posts/statusPost.js') }}"></script>
+
     <script>
-      // Inicializa os scripts após o carregamento do DOM
       document.addEventListener('DOMContentLoaded', () => {
-        if(typeof initCreatePost === 'function') {
-          initCreatePost();
-        }
-        if(typeof initEditPost === 'function') {
-          initEditPost();
-        }
+        if(typeof initCreatePost === 'function') initCreatePost();
+        if(typeof initEditPost === 'function') initEditPost();
       });
     </script>
 
