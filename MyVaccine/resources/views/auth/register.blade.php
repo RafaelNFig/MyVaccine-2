@@ -6,6 +6,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://kit.fontawesome.com/c8e307d42e.js" crossorigin="anonymous"></script>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="icon" type="image/x-icon" href="{{ asset('img/icon.png') }}">
   <title>Cadastro - My Vaccine</title>
   @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
