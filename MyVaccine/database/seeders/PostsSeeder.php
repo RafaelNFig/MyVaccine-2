@@ -15,7 +15,6 @@ class PostsSeeder extends Seeder
 
         $posts = [
             ['name' => 'Posto Saúde Central', 'address' => 'Rua Principal, 123', 'city' => 'São Paulo', 'state' => 'SP'],
-            ['name' => 'Posto Saúde Campinas', 'address' => 'Rua das Acácias, 258', 'city' => 'Campinas', 'state' => 'SP'],
             ['name' => 'Posto Saúde Ribeirão Preto', 'address' => 'Avenida Independência, 951', 'city' => 'Ribeirão Preto', 'state' => 'SP'],
             ['name' => 'Posto Saúde Joinville', 'address' => 'Rua Blumenau, 369', 'city' => 'Joinville', 'state' => 'SC'],
             ['name' => 'Posto Saúde Norte', 'address' => 'Avenida das Flores, 456', 'city' => 'Rio de Janeiro', 'state' => 'RJ'],
