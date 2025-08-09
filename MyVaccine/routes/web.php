@@ -79,8 +79,11 @@ Route::middleware('auth')->group(function () {
     |--------------------------------------------------------------------------
     */
     Route::resource('vaccines', VaccineController::class);
-
     Route::resource('stock', StockController::class);
+    // Admin Home de Vacinas - Rota principal com filtro opcional por post_id
+    Route::get('/admin/vaccines/home/{post_id?}', [StockController::class, 'homeVaccines'])
+    ->name('admin.vaccines.home');
+    
 
     /*
     |--------------------------------------------------------------------------
