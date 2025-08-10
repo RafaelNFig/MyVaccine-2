@@ -4,79 +4,110 @@ namespace App\Http\Controllers\Vaccines;
 
 use App\Http\Controllers\Controller;
 use App\Models\Vaccine;
-use App\Models\Stock;
-use App\Models\Post;
 use Illuminate\Http\Request;
 
 class VaccineController extends Controller
 {
+    /**
+     * Lista todas as vacinas
+     */
     public function index()
     {
-        $vaccines = Vaccine::all();
-        return view('admin.home', compact('vaccines'));
-    }
-
-    public function create()
-    {
-        return view('vaccine.create');
-    }
-
-    public function store(Request $request)
-    {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'min_age' => 'required|integer',
-            'max_age' => 'nullable|integer',
-            'contraindications' => 'nullable|string',
-        ]);
-
-        Vaccine::create($request->all());
-        return redirect()->route('vaccines.index')->with('success', 'Vacina adicionada com sucesso!');
-    }
-
-    public function edit($id)
-    {
-        $vaccine = Vaccine::findOrFail($id);
-        return view('vaccine.edit', compact('vaccine'));
-    }
-
-    public function update(Request $request, $id)
-    {
-        $vaccine = Vaccine::findOrFail($id);
-        $vaccine->update($request->all());
-        return redirect()->route('vaccines.index')->with('success', 'Vacina atualizada com sucesso!');
-    }
-
-    public function destroy($id)
-    {
-        Vaccine::destroy($id);
-        return redirect()->route('vaccines.index')->with('success', 'Vacina removida.');
+        $vaccines = Vaccine::orderBy('id', 'desc')->get();
+        return view('admin.Vaccines.homevaccines', compact('vaccines'));
     }
 
     /**
-     * Página Home de Vacinas para um posto específico ou vazia sem posto.
+     * Salva uma nova vacina (Cadastro)
      */
-    public function homeByPost($post_id = null)
+    public function store(Request $request)
     {
-        if ($post_id) {
-            $posto = Post::find($post_id);
+        $request->validate([
+            'name'               => 'required|string|max:100',
+            'min_age'            => 'required|integer|min:0',
+            'max_age'            => 'nullable|integer|min:0',
+            'contraindications'  => 'nullable|string',
+        ]);
 
-            if (!$posto) {
-                abort(404, 'Posto não encontrado');
-            }
+        $vaccine = Vaccine::create($request->only([
+            'name', 'min_age', 'max_age', 'contraindications'
+        ]));
 
-            $stocks = Stock::where('post_id', $posto->id)->get();
-            $stock_id = $posto->id;
-        } else {
-            $posto = null;
-            $stocks = collect();
-            $stock_id = null;
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'vaccine' => $vaccine,
+                'message' => 'Vacina cadastrada com sucesso!'
+            ]);
         }
 
-        // Todas as vacinas (para exibir ou usar em selects)
-        $vaccines = Vaccine::all();
+        return redirect()->route('vaccines.index')
+                         ->with('success', 'Vacina cadastrada com sucesso!');
+    }
 
-        return view('admin.Vaccines.homevaccines', compact('stocks', 'vaccines', 'stock_id', 'posto'));
+    /**
+     * Atualiza uma vacina (Edição)
+     */
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'name'               => 'required|string|max:100',
+            'min_age'            => 'required|integer|min:0',
+            'max_age'            => 'nullable|integer|min:0',
+            'contraindications'  => 'nullable|string',
+        ]);
+
+        $vaccine = Vaccine::findOrFail($id);
+        $vaccine->update($request->only([
+            'name', 'min_age', 'max_age', 'contraindications'
+        ]));
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'vaccine' => $vaccine,
+                'message' => 'Vacina atualizada com sucesso!'
+            ]);
+        }
+
+        return redirect()->route('vaccines.index')
+                         ->with('success', 'Vacina atualizada com sucesso!');
+    }
+
+    /**
+     * Remove uma vacina (Remoção)
+     */
+    public function destroy(Request $request, $id)
+    {
+        $vaccine = Vaccine::find($id);
+
+        if (!$vaccine) {
+            if ($request->ajax()) {
+                return response()->json(['success' => false, 'message' => 'Vacina não encontrada.'], 404);
+            }
+            // Opcional: para requisições não ajax, redirecione ou retorne erro
+            return response()->json(['success' => false, 'message' => 'Vacina não encontrada.'], 404);
+        }
+
+        try {
+            $vaccine->delete();
+        } catch (\Exception $e) {
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Erro ao excluir vacina: ' . $e->getMessage()
+                ], 500);
+            }
+            return response()->json([
+                'success' => false,
+                'message' => 'Erro ao excluir vacina.'
+            ], 500);
+        }
+
+        if ($request->ajax()) {
+            return response()->json(['success' => true, 'message' => 'Vacina removida com sucesso!']);
+        }
+
+        return response()->json(['success' => true, 'message' => 'Vacina removida com sucesso!']);
     }
 }
