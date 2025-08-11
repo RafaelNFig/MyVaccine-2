@@ -15,13 +15,10 @@ class StockController extends Controller
      */
     public function index($postId)
     {
-        // Busca o posto
         $post = Post::findOrFail($postId);
 
-        // Estoques apenas desse posto
         $stocks = Stock::where('post_id', $postId)->get();
 
-        // Lista de vacinas para o formulário de adicionar
         $vaccines = Vaccine::all();
 
         return view('admin.stocksPosts', compact('post', 'stocks', 'vaccines'));
@@ -65,5 +62,26 @@ class StockController extends Controller
 
         return redirect()->route('stock.index', $post->id)
             ->with('success', 'Lote removido do estoque.');
+    }
+
+    /**
+     * Retorna o estoque do posto em JSON para API (para o modal).
+     */
+    public function apiStocks($postId)
+    {
+        $post = Post::findOrFail($postId);
+    
+        $stocks = Stock::with('vaccine')
+            ->where('post_id', $postId)
+            ->get()
+            ->map(function ($stock) {
+                return [
+                    'vaccine_name' => $stock->vaccine->name,
+                    'quantity' => $stock->quantity,
+                    'expiration_date' => $stock->expiration_date,
+                ];
+            });
+    
+        return response()->json($stocks);
     }
 }
