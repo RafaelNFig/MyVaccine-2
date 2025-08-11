@@ -45,6 +45,12 @@ class VaccineController extends Controller
                          ->with('success', 'Vacina cadastrada com sucesso!');
     }
 
+    public function homeVaccines($post_id = null)
+    {
+        $vaccines = Vaccine::orderBy('id', 'desc')->get();
+        return view('admin.Vaccines.homevaccines', compact('vaccines'));
+    }
+
     /**
      * Atualiza uma vacina (Edição)
      */

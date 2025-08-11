@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Vaccines;
 
 use App\Models\Stock;
@@ -9,78 +10,60 @@ use Illuminate\Http\Request;
 
 class StockController extends Controller
 {
-    public function index()
+    /**
+     * Lista o estoque de um posto específico.
+     */
+    public function index($postId)
     {
-        $stocks = Stock::all();
-        return view('stock.index', compact('stocks'));
+        // Busca o posto
+        $post = Post::findOrFail($postId);
+
+        // Estoques apenas desse posto
+        $stocks = Stock::where('post_id', $postId)->get();
+
+        // Lista de vacinas para o formulário de adicionar
+        $vaccines = Vaccine::all();
+
+        return view('admin.stocksPosts', compact('post', 'stocks', 'vaccines'));
     }
 
-    public function create()
+    /**
+     * Salva um novo lote no estoque do posto.
+     */
+    public function store(Request $request, $postId)
     {
-        return view('stock.create');
-    }
+        $post = Post::findOrFail($postId);
 
-    public function store(Request $request)
-    {
         $request->validate([
-            'post_id' => 'required|exists:posts,id',
             'vaccine_id' => 'required|exists:vaccines,id',
             'quantity' => 'required|integer|min:0',
             'batch' => 'required|string|max:50',
             'expiration_date' => 'required|date',
         ]);
 
-        Stock::create($request->all());
-        return redirect()->route('stock.index')->with('success', 'Estoque adicionado com sucesso!');
-    }
+        Stock::create([
+            'post_id' => $post->id,
+            'vaccine_id' => $request->vaccine_id,
+            'quantity' => $request->quantity,
+            'batch' => $request->batch,
+            'expiration_date' => $request->expiration_date,
+        ]);
 
-    public function edit($id)
-    {
-        $stock = Stock::findOrFail($id);
-        return view('stock.edit', compact('stock'));
-    }
-
-    public function update(Request $request, $id)
-    {
-        $stock = Stock::findOrFail($id);
-        $stock->update($request->all());
-        return redirect()->route('stock.index')->with('success', 'Estoque atualizado com sucesso!');
-    }
-
-    public function destroy($id)
-    {
-        Stock::destroy($id);
-        return redirect()->route('stock.index')->with('success', 'Estoque removido.');
+        return redirect()->route('stock.index', $post->id)
+            ->with('success', 'Vacina adicionada ao estoque com sucesso!');
     }
 
     /**
-     * Exibe a tela de vacinas/estoque.
-     * - Se $post_id informado: mostra estoques do posto.
-     * - Se não informado: mostra a tela de vacinas vazia (sem depender de posto).
-     *
-     * @param int|null $post_id
-     * @return \Illuminate\View\View
+     * Remove um lote do estoque.
      */
-    public function homeVaccines($post_id = null)
+    public function destroy($postId, $stockId)
     {
-        if ($post_id) {
-            $post = Post::find($post_id);
+        $post = Post::findOrFail($postId);
 
-            if (!$post) {
-                abort(404, 'Posto não encontrado');
-            }
+        $stock = Stock::where('post_id', $post->id)->findOrFail($stockId);
+        $stock->delete();
 
-            $stocks = Stock::where('post_id', $post_id)->get();
-        } else {
-            // não há posto selecionado -> não quebrar a view
-            $post = null;
-            // manter estoque vazio (a view pode exibir mensagem "nenhum lote" ou listar vacinas separadamente)
-            $stocks = collect();
-        }
-
-        // lista de vacinas (mesmo sem posto)
-        $vaccines = Vaccine::all();
-
-        return view('admin.Vaccines.homevaccines', compact('post', 'stocks', 'vaccines'));
+        return redirect()->route('stock.index', $post->id)
+            ->with('success', 'Lote removido do estoque.');
     }
 }
