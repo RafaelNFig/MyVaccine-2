@@ -11,6 +11,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Admin\AdminAuthController;
 use App\Http\Controllers\Posts\PostoController;
+use App\Http\Controllers\UserControllers\PostUserController;
 use App\Models\Post;
 use App\Models\Stock;
 use App\Models\Vaccine;
@@ -99,9 +100,9 @@ Route::middleware('auth')->group(function () {
     |--------------------------------------------------------------------------
     */
     Route::get('users', [UserController::class, 'index'])->name('users.index');
-    Route::get('users/{id}', [UserController::class, 'show'])->name('users.show');
+    Route::get('users/{id}', [UserController::class, 'show'])->name('users.showPosts');
     Route::delete('users/{id}', [UserController::class, 'destroy'])->name('users.destroy');
-
+    Route::get('/posts', [PostUserController::class, 'index'])->name('posts.index');
     /*
     |--------------------------------------------------------------------------
     | Postos de vacinação (Admin)
