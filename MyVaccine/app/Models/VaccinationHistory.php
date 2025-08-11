@@ -17,6 +17,9 @@ class VaccinationHistory extends Model
         'application_date',
     ];
 
+    protected $casts = [
+        'application_date' => 'datetime',
+    ];
 
     public function user()
     {
