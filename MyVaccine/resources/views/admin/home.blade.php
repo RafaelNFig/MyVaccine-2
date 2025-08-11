@@ -28,7 +28,7 @@
                 <a href="{{ route('postos.index') }}">
                     <i class="fa-solid fa-house-medical text-[20px] text-black"></i>
                 </a>
-                <a href="{{ route('vaccination-history.index') }}">
+                <a href="{{ route('admin.vaccine.application') }}">
                     <i class="fa-solid fa-bed text-[20px] text-gray-400 hover:text-black transition all"></i>
                 </a>
                 <a href="{{ route('admin.vaccines.home') }}">
