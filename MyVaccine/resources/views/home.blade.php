@@ -25,7 +25,7 @@
                             <a href="{{ route('home') }}" class="font-semibold">home</a>
                             <span class="w-2 h-2 bg-blue-500 rounded-full"></span>
                         </li>
-                        <li><a href="{{ route('vaccines.index') }}" class="hover:font-semibold">postos de vacinação</a></li>
+                        <li><a href="{{ route('posts.index') }}" class="hover:font-semibold">postos de vacinação</a></li>
                         <li><a href="{{ route('vaccination-history.index') }}" class="hover:font-semibold">histórico de vacinas</a></li>
                     </ul>
                     <div class="flex items-center gap-4">
@@ -49,7 +49,7 @@
         <div class="flex flex-col justify-center gap-6 max-w-[640px]">
             <h1 class="font-bold text-[24px] lg:text-[40px]">Encontre <span class="text-blue-400">postos de vacinação</span> próximos a você.</h1>
             <p class="text-sm text-gray-500">O My Vaccine facilita o acesso à vacinação, permitindo que você encontre postos de saúde, consulte vacinas disponíveis e gerencie seu histórico de imunização de forma prática e segura.</p>
-            <a href="{{ route('vaccines.index') }}" class="bg-blue-500 text-white px-6 py-2 text-sm rounded-md hover:bg-blue-600">Encontrar Postos</a>
+            <a href="{{ route('posts.index') }}" class="bg-blue-500 text-white px-6 py-2 text-sm rounded-md hover:bg-blue-600">Encontrar Postos</a>
         </div>
         <div class="flex justify-center items-center">
             <img src="{{ asset('img/vetor-main.jpg') }}" alt="Vacinação" class="w-[250px] md:w-[500px]">
