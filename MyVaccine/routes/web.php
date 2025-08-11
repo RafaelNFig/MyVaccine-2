@@ -1,8 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
-// Controladores organizados por pastas
+use App\Http\Controllers\Vaccines\VaccineApplicationController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\Vaccines\VaccineController;
 use App\Http\Controllers\Vaccines\StockController;
@@ -12,8 +11,6 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Admin\AdminAuthController;
 use App\Http\Controllers\Posts\PostoController;
 use App\Models\Post;
-use App\Models\Stock;
-use App\Models\Vaccine;
 
 /*
 |--------------------------------------------------------------------------
@@ -49,41 +46,65 @@ Route::middleware('guest')->group(function () {
 
 /*
 |--------------------------------------------------------------------------
-| Rotas para usuários autenticados
+| Rota fora do grupo admin para carregar a página de aplicação de vacina
+|--------------------------------------------------------------------------
+| (Manter fora do grupo admin para evitar problema de carregamento)
+*/
+Route::get('/vaccine-application', [VaccineApplicationController::class, 'index'])
+    ->name('admin.vaccine.application');
+    Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+
+/*
+|--------------------------------------------------------------------------
+| Rotas admin sem autenticação para aplicação de vacina
 |--------------------------------------------------------------------------
 */
-Route::middleware('auth')->group(function () {
+Route::prefix('admin')->group(function () {
+    Route::get('/patients/vaccinate', [VaccineApplicationController::class, 'create'])
+        ->name('admin.patients.vaccinate');
 
-    // Dashboard usuário comum
-    Route::get('/user/home', [UserController::class, 'home'])->name('user.home');
+    Route::post('/patients/vaccinate', [VaccineApplicationController::class, 'store'])
+        ->name('admin.patients.vaccinate.store');
 
-    /*
-    |--------------------------------------------------------------------------
-    | Rotas Admin Autenticado
-    |--------------------------------------------------------------------------
-    */
+    // Rota AJAX para obter vacinas disponíveis para um posto
+    Route::get('/posts/{post}/vaccines', [VaccineApplicationController::class, 'getVaccinesByPost'])
+        ->name('admin.posts.vaccines');
+});
 
-    // Admin Home com listagem de postos
-    Route::get('/admin/home', function () {
+/*
+|--------------------------------------------------------------------------
+| Rotas para usuários autenticados (admin)
+|--------------------------------------------------------------------------
+*/
+Route::middleware('auth')->prefix('admin')->group(function () {
+
+    // Dashboard admin com listagem de postos
+    Route::get('/home', function () {
         $posts = Post::all();
         return view('admin.home', compact('posts'));
     })->name('admin.home');
 
-    // Admin Home de Vacinas - Rota principal com filtro opcional por post_id
-    Route::get('/admin/vaccines/home/{post_id?}', [StockController::class, 'homeVaccines'])
+    // Admin Home de Vacinas - tela geral
+    Route::get('/vaccines/home/{post_id?}', [VaccineController::class, 'homeVaccines'])
     ->name('admin.vaccines.home');
 
     /*
     |--------------------------------------------------------------------------
-    | Recursos de Vacinas e Estoques
+    | Estoque por posto
+    |--------------------------------------------------------------------------
+    */
+    Route::prefix('postos/{post}')->group(function () {
+        Route::get('stocks', [StockController::class, 'index'])->name('stock.index');
+        Route::post('stocks', [StockController::class, 'store'])->name('stock.store');
+        Route::delete('stocks/{stock}', [StockController::class, 'destroy'])->name('stock.destroy');
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | Recursos de Vacinas
     |--------------------------------------------------------------------------
     */
     Route::resource('vaccines', VaccineController::class);
-    Route::resource('stock', StockController::class);
-    Route::get('/admin/vaccines/home/{post_id?}', [StockController::class, 'homeVaccines'])
-    ->name('admin.vaccines.home');
-    Route::delete('/vaccines/{id}', [VaccineController::class, 'destroy'])->name('vaccines.destroy');
-    
 
     /*
     |--------------------------------------------------------------------------
@@ -107,18 +128,10 @@ Route::middleware('auth')->group(function () {
     | Postos de vacinação (Admin)
     |--------------------------------------------------------------------------
     */
-    Route::resource('admin/postos', PostoController::class)->names('postos');
-    Route::post('/postos', [PostoController::class, 'store'])->name('postos.store');
-    Route::patch('/postos/{id}/disable', [PostoController::class, 'disable'])->name('postos.disable');
-    Route::patch('/postos/{id}/activate', [PostoController::class, 'activate'])->name('postos.activate');
-    Route::get('/postos/{id}/edit', [PostoController::class, 'edit'])->name('postos.edit');
-    Route::put('/postos/{id}', [PostoController::class, 'update'])->name('postos.update');
-    Route::patch('/postos/{posto}/toggle-status', [PostoController::class, 'toggleStatus'])->name('postos.toggleStatus');
+    Route::resource('postos', PostoController::class)->names('postos');
 
-    /*
-    |--------------------------------------------------------------------------
-    | Logout para usuário comum
-    |--------------------------------------------------------------------------
-    */
-    Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+    // Rotas extras para postos
+    Route::patch('postos/{id}/disable', [PostoController::class, 'disable'])->name('postos.disable');
+    Route::patch('postos/{id}/activate', [PostoController::class, 'activate'])->name('postos.activate');
+    Route::patch('postos/{posto}/toggle-status', [PostoController::class, 'toggleStatus'])->name('postos.toggleStatus');
 });
