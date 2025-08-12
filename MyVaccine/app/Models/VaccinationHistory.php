@@ -35,4 +35,12 @@ class VaccinationHistory extends Model
     {
         return $this->belongsTo(Post::class);
     }
+
+    public function getDoseNumberAttribute()
+{
+    return self::where('user_cpf', $this->user_cpf)
+        ->where('vaccine_id', $this->vaccine_id)
+        ->where('application_date', '<=', $this->application_date)
+        ->count();
+}
 }
