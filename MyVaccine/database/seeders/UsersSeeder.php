@@ -11,10 +11,10 @@ class UsersSeeder extends Seeder
 {
     public function run()
     {
-        // Apaga todos os dados da tabela (delete para evitar problemas com foreign keys)
-        DB::table('users')->delete();
+        // Limpa a tabela e reseta o auto-increment
+        DB::table('users')->truncate();
 
-        // Define o array dos usuários
+        // Array com os usuários a serem criados
         $users = [
             ['cpf' => '12345678901', 'role' => 'usuario', 'name' => 'Usuário 1', 'password' => Hash::make('senha1'), 'email' => 'user1@email.com', 'dob' => '1990-01-01', 'address' => 'Endereço 1', 'telephone' => '81999990001'],
             ['cpf' => '98765432109', 'role' => 'usuario', 'name' => 'Usuário 2', 'password' => Hash::make('senha2'), 'email' => 'user2@email.com', 'dob' => '1991-02-02', 'address' => 'Endereço 2', 'telephone' => '81999990002'],
@@ -32,7 +32,7 @@ class UsersSeeder extends Seeder
             ['cpf' => '99999999999', 'role' => 'admin', 'name' => 'Administrador', 'password' => Hash::make('adm'), 'email' => 'adm@adm.com', 'dob' => '2000-01-01', 'address' => 'n/a', 'telephone' => '81996512724'],
         ];
 
-        // Insere os usuários
+        // Insere os usuários na tabela
         DB::table('users')->insert($users);
     }
 }
