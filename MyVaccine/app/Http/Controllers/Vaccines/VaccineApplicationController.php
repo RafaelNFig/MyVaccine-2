@@ -17,17 +17,20 @@ class VaccineApplicationController extends Controller
     // Página inicial da aplicação da vacina (lista ou overview)
     public function index()
     {
+        $users = User::all();
         $posts = Post::where('status', 'ativo')->get();
-        $vaccines = Vaccine::all();  // Pega todas as vacinas, sem filtro
-        return view('admin.Pacients.vaccineaplication', compact('posts', 'vaccines'));
+
+        return view('admin.Pacients.vaccineaplication', compact('users', 'posts'));
     }
 
-    // Mostrar formulário de vacinação
+    // Mostrar formulário de vacinação (mesma view, mesma lógica)
     public function create()
     {
         $posts = Post::where('status', 'ativo')->get();
-        $vaccines = Vaccine::all();  // Pega todas as vacinas, sem filtro
-        return view('admin.Pacients.vaccineaplication', compact('posts', 'vaccines'));
+        $vaccines = Vaccine::all();
+        $users = User::where('role', 'usuario')->get();
+
+        return view('admin.Pacients.vaccineaplication', compact('posts', 'vaccines', 'users'));
     }
 
     // Processar a vacinação
@@ -42,6 +45,24 @@ class VaccineApplicationController extends Controller
         $user = User::where('cpf', $request->user_cpf)->first();
         $post = Post::find($request->post_id);
         $vaccine = Vaccine::find($request->vaccine_id);
+
+        if (!$user) {
+            throw ValidationException::withMessages([
+                'user_cpf' => ['Usuário não encontrado.'],
+            ]);
+        }
+
+        if (!$post) {
+            throw ValidationException::withMessages([
+                'post_id' => ['Posto não encontrado.'],
+            ]);
+        }
+
+        if (!$vaccine) {
+            throw ValidationException::withMessages([
+                'vaccine_id' => ['Vacina não encontrada.'],
+            ]);
+        }
 
         // Verificar estoque do posto para essa vacina
         $stock = Stock::where('post_id', $post->id)
@@ -67,13 +88,12 @@ class VaccineApplicationController extends Controller
         // Diminuir estoque em 1
         $stock->decrement('quantity');
 
-        return redirect()->route('vaccination-history.index')->with('success', 'Vacina aplicada com sucesso!');
+        return redirect()->route('admin.patients.vaccinate')->with('success', 'Vacina aplicada com sucesso!');
     }
 
-    // Novo método para retornar vacinas disponíveis em estoque para um posto via AJAX
+    // Retorna vacinas disponíveis para um posto via AJAX
     public function getVaccinesByPost(Post $post)
     {
-        // Busca vacinas que tenham estoque > 0 neste posto
         $vaccines = Vaccine::whereHas('stocks', function($query) use ($post) {
             $query->where('post_id', $post->id)
                   ->where('quantity', '>', 0);
