@@ -4,17 +4,56 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Histórico de Vacinação - My Vaccine</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://kit.fontawesome.com/c8e307d42e.js" crossorigin="anonymous"></script>
 </head>
-<body class="bg-gray-50 min-h-screen flex flex-col">
+<body class="overflow-x-hidden text-[#100E3D] font-['Roboto'] flex flex-col min-h-screen">
 
-    <header class="bg-white shadow-md">
-        <nav class="container mx-auto flex items-center justify-between p-4">
+    <header>
+        <nav class="px-[6%] h-[8vh] flex justify-between items-center shadow-lg text-[#100E3D] relative">
             <a href="{{ route('home') }}">
-                <img src="{{ asset('img/logo.png') }}" alt="Logo" class="h-14" />
+                <img src="{{ asset('img/logo.png') }}" alt="logo" class="md:hidden w-[190px]" />
             </a>
-            <!-- Aqui você pode colocar outros links / menu se quiser -->
+            <div class="hidden md:block w-full">
+                <div class="flex w-full justify-between items-center">
+                    <a href="{{ route('home') }}">
+                        <img src="{{ asset('img/logo.png') }}" alt="logo" class="hidden md:block w-[190px]" />
+                    </a>
+                    <ul class="flex gap-12 uppercase text-[12px]">
+                        <li class="flex flex-col items-center">
+                            <a href="{{ route('home') }}" class="{{ request()->routeIs('home') ? 'font-semibold' : '' }}">home</a>
+                            @if(request()->routeIs('home'))
+                                <span class="w-2 h-2 bg-blue-500 rounded-full"></span>
+                            @endif
+                        </li>
+                        <li class="flex flex-col items-center">
+                            <a href="{{ route('posts.index') }}" class="{{ request()->routeIs('posts.index') ? 'font-semibold' : 'hover:font-semibold' }}">postos de vacinação</a>
+                            @if(request()->routeIs('posts.index'))
+                                <span class="w-2 h-2 bg-blue-500 rounded-full"></span>
+                            @endif
+                        </li>
+                        <li class="flex flex-col items-center">
+                            <a href="{{ route('vaccination-history.index') }}" class="{{ request()->routeIs('vaccination-history.index') ? 'font-semibold' : 'hover:font-semibold' }}">histórico de vacinas</a>
+                            @if(request()->routeIs('vaccination-history.index'))
+                                <span class="w-2 h-2 bg-blue-500 rounded-full"></span>
+                            @endif
+                        </li>
+                    </ul>
+                    <div class="flex items-center gap-4">
+                        @auth
+                            <span class="text-sm font-semibold">Olá, {{ Auth::user()->name }}</span>
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button type="submit" class="bg-red-500 text-white px-4 py-2 text-sm rounded-md hover:bg-red-600">Sair</button>
+                            </form>
+                        @else
+                            <a href="{{ route('login') }}" class="bg-blue-500 text-white px-4 py-2 text-sm rounded-md hover:bg-blue-600">Login</a>
+                            <a href="{{ route('register') }}" class="bg-blue-500 text-white px-4 py-2 text-sm rounded-md hover:bg-blue-600">Cadastro</a>
+                        @endauth
+                    </div>
+                </div>
+            </div>
         </nav>
     </header>
 
@@ -28,8 +67,7 @@
                 <table class="min-w-full table-auto">
                     <thead>
                         <tr class="bg-[#100E3D] text-white text-left text-sm">
-                            <th class="font-light py-2 px-4 rounded-tl-lg">Usuário</th>
-                            <th class="font-light py-2 px-4">Vacina</th>
+                            <th class="font-light py-2 px-4 rounded-tl-lg">Vacina</th>
                             <th class="font-light py-2 px-4">Dose</th>
                             <th class="font-light py-2 px-4">Data</th>
                             <th class="font-light py-2 px-4">Lote</th>
@@ -39,14 +77,13 @@
                     <tbody>
                         @foreach ($histories as $history)
                             <tr class="border-b hover:bg-gray-50 text-gray-800 text-sm">
-                                <td class="py-2 px-4">{{ $history->user->name }}</td>
                                 <td class="py-2 px-4">{{ $history->vaccine->name }}</td>
-                                <td class="py-2 px-4">{{ $history->dose ?? '—' }}</td>
+                                <td class="py-2 px-4">{{ $history->dose_number ?? '—' }}</td>
                                 <td class="py-2 px-4">
                                     {{ \Carbon\Carbon::parse($history->application_date)->format('d/m/Y H:i') }}
                                 </td>
                                 <td class="py-2 px-4">{{ $history->batch ?? '—' }}</td>
-                                <td class="py-2 px-4">{{ $history->location ?? '—' }}</td>
+                                <td class="py-2 px-4">{{ $history->post->name ?? '—' }}</td>
                             </tr>
                         @endforeach
                     </tbody>
