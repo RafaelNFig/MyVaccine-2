@@ -65,10 +65,17 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 /*
 |--------------------------------------------------------------------------
-| Rotas para aplicação de vacina - acessíveis via prefixo 'admin'
+| Rotas para aplicação de vacina - prefixo 'admin' sem auth
 |--------------------------------------------------------------------------
 */
-Route::prefix('admin')->middleware('auth')->group(function () {
+Route::prefix('admin')->group(function () {
+
+    // Postos de vacinação (Admin) - CRUD completo e rotas extras
+    Route::resource('postos', PostoController::class)->names('postos');
+    Route::patch('postos/{id}/disable', [PostoController::class, 'disable'])->name('postos.disable');
+    Route::patch('postos/{id}/activate', [PostoController::class, 'activate'])->name('postos.activate');
+    Route::patch('postos/{posto}/toggle-status', [PostoController::class, 'toggleStatus'])->name('postos.toggleStatus');
+    Route::get('postos/{posto}/edit', [PostoController::class, 'edit'])->name('postos.edit');
 
     // Página para listar usuários e aplicar vacina
     Route::get('/patients/vaccinate', [VaccineApplicationController::class, 'create'])
@@ -92,60 +99,30 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::get('/vaccines/home/{post_id?}', [VaccineController::class, 'homeVaccines'])
         ->name('admin.vaccines.home');
 
-    /*
-    |---------------------------------------------------------------
-    | Estoque por posto (admin)
-    |---------------------------------------------------------------
-    */
+    // Estoque por posto (admin)
     Route::prefix('postos/{post}')->group(function () {
         Route::get('stocks', [StockController::class, 'index'])->name('stock.index');
         Route::post('stocks', [StockController::class, 'store'])->name('stock.store');
         Route::delete('stocks/{stock}', [StockController::class, 'destroy'])->name('stock.destroy');
     });
 
-    /*
-    |---------------------------------------------------------------
-    | Recursos de Vacinas
-    |---------------------------------------------------------------
-    */
+    // Recursos de Vacinas
     Route::resource('vaccines', VaccineController::class);
 
-    /*
-    |---------------------------------------------------------------
-    | Histórico de vacinação
-    |---------------------------------------------------------------
-    */
+    // Histórico de vacinação
     Route::get('vaccination-history', [VaccinationHistoryController::class, 'index'])->name('vaccination-history.index');
     Route::get('vaccination-history/{id}', [VaccinationHistoryController::class, 'show'])->name('vaccination-history.show');
 
-    /*
-    |---------------------------------------------------------------
-    | Usuários
-    |---------------------------------------------------------------
-    */
+    // Usuários
     Route::get('users', [UserController::class, 'index'])->name('users.index');
     Route::get('users/{id}', [UserController::class, 'show'])->name('users.showPosts');
     Route::delete('users/{id}', [UserController::class, 'destroy'])->name('users.destroy');
-
-    /*
-    |---------------------------------------------------------------
-    | Postos de vacinação (Admin)
-    |---------------------------------------------------------------
-    */
-    Route::resource('postos', PostoController::class)->names('postos');
-
-    // Rotas extras para postos
-    Route::patch('postos/{id}/disable', [PostoController::class, 'disable'])->name('postos.disable');
-    Route::patch('postos/{id}/activate', [PostoController::class, 'activate'])->name('postos.activate');
-    Route::patch('postos/{posto}/toggle-status', [PostoController::class, 'toggleStatus'])->name('postos.toggleStatus');
 });
 
 /*
 |--------------------------------------------------------------------------
 | Rota para carregar a página principal da aplicação de vacina fora do prefixo admin
-| (se realmente precisar, pode deixar ou remover conforme seu fluxo)
 |--------------------------------------------------------------------------
 */
 Route::get('/vaccine-application', [VaccineApplicationController::class, 'index'])
-    ->middleware('auth') // Recomendo proteger com auth
     ->name('admin.vaccine.application');
