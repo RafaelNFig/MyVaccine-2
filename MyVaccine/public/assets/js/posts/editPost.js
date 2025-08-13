@@ -32,7 +32,7 @@ if (!window.editPostModuleInitialized) {
     // Função para abrir modal e carregar dados do posto
     async function openEditModal(postId) {
       try {
-        const response = await fetch(`/postos/${postId}/edit`, {
+        const response = await fetch(`/admin/postos/${postId}/edit`, {
           headers: { 'Accept': 'application/json' },
         });
         if (!response.ok) throw new Error('Erro na requisição');
@@ -42,7 +42,7 @@ if (!window.editPostModuleInitialized) {
           const post = data.post;
   
           // Preenche campos do formulário
-          editForm.action = `/postos/${post.id}`;
+          editForm.action = `/admin/postos/${post.id}`;
           editForm.querySelector('#editPostId').value = post.id;
           editForm.querySelector('#editPostName').value = post.name;
           editForm.querySelector('#editPostAddress').value = post.address;
@@ -135,5 +135,4 @@ if (!window.editPostModuleInitialized) {
   
     // Expõe a função globalmente (opcional)
     window.openEditModal = openEditModal;
-  }
-  
+}

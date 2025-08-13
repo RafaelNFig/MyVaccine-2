@@ -31,14 +31,14 @@ confirmYesBtn.addEventListener('click', () => {
 function toggleStatus(postId, button) {
   const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-  fetch(`/postos/${postId}/toggle-status`, {
-    method: 'PATCH',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-CSRF-TOKEN': token,
-      'Accept': 'application/json',
-    },
-  })
+  fetch(`/admin/postos/${postId}/toggle-status`, {
+  method: 'PATCH',
+  headers: {
+    'Content-Type': 'application/json',
+    'X-CSRF-TOKEN': token,
+    'Accept': 'application/json',
+  },
+})
   .then(res => {
     if (!res.ok) throw new Error('Erro ao alterar status');
     return res.json();
